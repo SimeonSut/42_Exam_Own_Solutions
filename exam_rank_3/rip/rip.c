@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 14:57:14 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/08/12 01:06:12 by ssutarmi         ###   ########.fr       */
+/*   Created: 2026/08/13 14:20:49 by ssutarmi          #+#    #+#             */
+/*   Updated: 2026/08/13 15:41:46 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,21 @@
 #include <unistd.h>
 
 static void	setup(char *str, int len);
-static void	rip(char *str, int *array, int len, int count_zero);
-static int	move_zeros(int *array, int len, int *iteration);
+static void	rip(char *str, int *array, int len, int recursion);
+static int	move_zeros(int *array, int len, int *iter_start);
 static int	test_validity(char *str, int *array);
 
 int 	main(int argc, char **argv)
 {
-	int		i;
-	char	*str;
+	int len;
 
 	if (argc != 2)
-		return (1);
-	i = 0;
-	str = argv[1];
-	while (str[i])
-		i++;
-	setup(str, i);
-	return (0);
+		return 1;
+	len = 0;
+	while (argv[1][len])
+		len++;
+	setup(argv[1], len);
+	return 0;
 }
 
 static void	setup(char *str, int len)
@@ -49,19 +47,17 @@ static void	setup(char *str, int len)
 static void	rip(char *str, int *array, int len, int recursion)
 {
 	int	i;
-	int	iteration;
+	int	iter_start;
 	int	is_valid;
 
-	i = len;
-	while (--i > recursion)
-		array[i] = 1;
+	i = recursion;
 	while (--i >= 0)
 		array[i] = 0;
-	iteration = 0;
+	iter_start = 0;
 	is_valid = 1;
-	while (move_zeros(array, len, &iteration) == 0 || i < len)
+	while (move_zeros(array, len, &iter_start) == 0)
 	{
-		i = recursion + iteration++;
+		i = recursion + iter_start++;
 		while (i < len)
 		{
 			array[i] = 0;
@@ -75,13 +71,13 @@ static void	rip(char *str, int *array, int len, int recursion)
 		rip(str, array, len, recursion + 1);
 }
 
-static int	move_zeros(int *array, int len, int *iteration)
+static int		move_zeros(int *array, int len, int *iter_start)
 {
 	int	i;
 	int count;
-
-	if (*iteration == 0)
-		return (0);
+	
+	if (*iter_start == 0)
+		return 0;
 	i = len - 1;
 	count = 0;
 	while (i >= 0 && array[i] == 0)
@@ -92,34 +88,34 @@ static int	move_zeros(int *array, int len, int *iteration)
 	while (i >= 0 && array[i] == 1)
 		i--;
 	if (i < 0)
-		return (1);
+		return 1;
 	array[i++] = 1;
-	if (*iteration >= len - 1)
-		*iteration = i;
+	if (*iter_start >= len - 1)
+		*iter_start = i;
 	array[i++] = 0;
 	while (count-- > 0)
 		array[i++] = 0;
-	return (0);
+	return 0;
 }
 
-static int	test_validity(char *str, int *array)
+static int		test_validity(char *str, int *array)
 {
 	int	i;
-	int	count;
+	int	balance;
 
 	i = -1;
-	count = 0;
+	balance = 0;
 	while (str[++i])
 	{
-		if (array[i] == 1 && str[i] == '(')
-			count++;
 		if (array[i] == 1 && str[i] == ')')
-			count--;
-		if (count < 0)
-			return (1);
+			balance--;
+		else if (array[i] == 1 && str[i] == '(')
+			balance++;
+		if (balance < 0)
+			return 1;
 	}
-	if (count > 0)
-		return (1);
+	if (balance > 0)
+		return 1;
 	i = -1;
 	while (str[++i])
 	{
@@ -128,5 +124,5 @@ static int	test_validity(char *str, int *array)
 		else
 			write(1, " ", 1);
 	}
-	return (write(1, "\n", 1), 0);
+	return(write(1, "\n", 1), 0);
 }

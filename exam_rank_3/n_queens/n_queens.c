@@ -1,103 +1,87 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   n_queens.c                                         :+:      :+:    :+:   */
+/*   n_queens2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/24 16:19:55 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/07/29 15:08:36 by ssutarmi         ###   ########.fr       */
+/*   Created: 2026/08/12 11:46:14 by ssutarmi          #+#    #+#             */
+/*   Updated: 2026/08/12 17:25:08 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "n_queens.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
 
-void	print_solution(int *pos, int n)
-{
-	int	i;
-
-	i = 0;
-	while (i < n)
-	{
-		fprintf(stdout, "%d", pos[i]);
-		i++;
-		if (i < n)
-			fprintf(stdout, " ");
-	}
-	fprintf(stdout, "\n");
-}
-
-int	is_valid(int col_pos, int row_pos, int *pos)
-{
-	int	row_i;
-
-	if (row_pos == 0)
-		return (0);
-	row_i = row_pos;
-	while (--row_i >= 0)
-	{
-		if (pos[row_i] == col_pos)
-			return (1);
-		if (pos[row_i] == col_pos - (row_pos - row_i))
-			return (1);
-		if (pos[row_i] == col_pos + (row_pos - row_i))
-			return (1);
-	}
-	return (0);
-}
-
-void	n_queens(int col, int row, int n, int *pos)
-{
-	int	col_i;
-
-	while (row < n)
-	{
-		col_i = col;
-		while (row < n && col_i < n)
-		{
-			if (is_valid(col_i, row, pos) == 0)
-			{
-				pos[row] = col_i;
-				row++;
-				col_i = 0;
-				continue ;
-			}
-			col_i++;
-		}
-		if (row == 0)
-			return ;
-		else if (row < n && col_i == n)
-		{
-			n_queens(pos[row - 1] + 1, row - 1, n, pos);
-			break ;
-		}
-		else if (row < n)
-			row++;
-		if (row == n)
-		{
-			print_solution(pos, n);
-			row--;
-			col = pos[row] + 1;
-		}
-	}
-}
+static void		n_queens(int n, int *table, int col, int row);
+static int		test_validity(int *table, int n, int col, int row);
 
 int main(int argc, char **argv)
 {
-	int	i;
-	int	n;
-	int	*pos;
-
-	if (argc != 2)
+	int n;
+	int *table;
+	
+	if (argc < 2)
 		return (1);
-	i = 0;
 	n = atoi(argv[1]);
-	pos = malloc(n * sizeof(int));
-	if (!pos)
+	table = malloc(n * sizeof(int));
+	if (!table)
 		return (1);
-	while (i < n)
-		pos[i++] = -1;
-	n_queens(0, 0, n, pos);
-	free(pos);
+	while (n >= 0)
+		table[n--]= -1;
+	n = atoi(argv[1]);
+	n_queens(n, table, 0, 0);
+	return (0);
+}
+
+static void	n_queens(int n, int *table, int col, int row)
+{
+	while (row < n)
+	{
+		table[col] =row;
+		if(test_validity(table, n, col, row) == 0)
+		{
+			col++;
+			if(col == n)
+			{
+				n_queens(n, table, (col - 1), (table[(col - 1)] + 1));
+				break ;
+			}
+			row = 0;
+			continue ;
+		}
+		row++;
+	}
+	if (row == n && col > 0)
+		n_queens(n, table, (col - 1), (table[(col - 1)] + 1));
+}
+
+static int		test_validity(int *table, int n, int col, int row)
+{
+	int	i;
+	int	test_col;
+
+	i = -1;
+	test_col = col;
+	while (--test_col >= 0)
+	{
+		if (table[test_col] == row)
+			return (1);
+		else if (table[test_col] == row - (col - test_col))
+			return (1);
+		else if (table[test_col] == row + (col - test_col))
+			return (1);
+	}
+	if (col == n - 1)
+	{
+		while (++i < n)
+		{
+			fprintf(stdout, "%d", table[i]);
+			if (i + 1 < n)
+				fprintf(stdout, " ");
+		}
+		fprintf(stdout, "\n");
+	}
 	return (0);
 }

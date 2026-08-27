@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 	int		*set;
 	int		*subset;
 
-	if (argc < 2)
+	if (argc < 3)
 		return (1);
 	n = atoi(argv[1]);
 	argv += 2;
