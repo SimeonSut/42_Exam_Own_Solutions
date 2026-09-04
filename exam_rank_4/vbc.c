@@ -6,7 +6,7 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/03 14:12:11 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/03 19:10:55 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/04 18:21:12 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,39 @@
 #include <stdio.h>
 #include <ctype.h>
 
-/*Find the end of the current quotes and split by
- *Find the first multiplication and split the tree by it
- *If no multiplication, find the first addition and split by it
- *
- *
- *
- *
- */
+//./vbc '(((2+2)*(2+2)*2+2)*(2+2)*2+2)*2' | cat -e
+//./vbc '(3+4)*5' | cat -e
+//./vbc '1' | cat -e
+//./vbc 2+2*2+2*2+2*2+2*2+2*2
+/*
++
+2|2*2+2*2+2*2+2*2+2*2
+	+
+	2*2|2*2+2*2+2*2+2*2
+		+
+		2*2|2*2+2*2+2*2
+		+
+		2*2|2*2+2*2
+		+
+		2*2|2*2
+
+
+
+(((2+2)*(2+2)*2+2)*(2+2)*2+2)*2
+*
+2|((2+2)*(2+2)*2+2)*(2+2)*2+2
+*
+2+2|((2+2)*(2+2)*2+2)*(2+2)
+*
+2+2|(2+2)*(2+2)*2+2
+*
+2+2|(2+2)*2+2
+*
+2+2|2+2
+
+first, the split by the multiplication happens, the by the addition.
+If any function starts by a parenthesis, trim it from then and start on the loop
+*/
 
 enum e_modes
 {
@@ -33,18 +58,40 @@ enum e_modes
 
 typedef struct	s_list
 {
-	union
-	{
-		char	operation;
-		int		number;
-	};
+	char	*str;
 	struct s_list	*right;
 	struct s_list	*left;
 }				t_list;
 
-//./vbc '(((((2+2)*2+2)*2+2)*2+2)*2+2)*2' | cat -e
-//./vbc '(3+4)*5' | cat -e
-//./vbc '1' | cat -e
+int		my_strlen(char *str)
+{
+	int	i;
+
+	i = 0;
+	while(str[i])
+		i++;
+	return (i);
+}
+
+char	*quote_trim(char *str)
+{
+	int		i;
+	int		len;
+	char	*new;
+
+	i = 0;
+	len = (my_strlen(str) - 1);
+	new = malloc((len + 1) * sizeof(char));
+	if (!new)
+		return (NULL);
+	new[len] = '\0';
+	while(i + 1 < len)
+	{
+		new[i] = str[i + 1];
+		i++;
+	}
+	return (new);
+}
 
 t_list	*list_init(int mode, int number, char operation)
 {
@@ -64,17 +111,20 @@ t_list	*list_init(int mode, int number, char operation)
 	return (0);
 }
 
-int	vbc(t_list *lst, char *input)
+int	operation_split(t_list *lst, char *input, char operation)
 {
 	int	i;
-	int	open_quote;
+	int	first_len;
 
 	i = 0;
-	open_quote = 0;
-	while (input[i] && input[i] != '(')
+	first_len = 0;
+	while (input[i])
 	{
-		i++;
 	}
+}
+
+int	vbc(t_list *lst, char *input, int sum)
+{
 	return 0;
 }
 
@@ -90,6 +140,6 @@ int	main(int argc, char **argv)
 	if (!lst)
 		return (1);
 	total_operation = argv[1];
-	result = vbc(lst, total_operation);
+	result = vbc(lst, total_operation, 0);
 	return (0);
 }
