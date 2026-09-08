@@ -1,4 +1,4 @@
-/* ************************************************************************** */
++/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   vbc_utils.c                                        :+:      :+:    :+:   */
@@ -42,14 +42,15 @@ char	*quote_trim(char *str)
 	return (new);
 }
 
-t_list	*list_init(char *str, int start, int len)
+t_list	*new_node(char *str, int start, int len)
 {
+	int		i;
 	t_list	*new;
 
+	i = 0;
 	new = malloc(sizeof(t_list));
 	if (!new)
 		return (NULL);
-	len = my_strlen(str);
 	new->str = malloc(len + 1 * sizeof(char));
 	if (!new->str)
 	{
@@ -57,8 +58,12 @@ t_list	*list_init(char *str, int start, int len)
 		return (NULL);
 	}
 	new->str[len] = NULL;
-	while (--len >= 0)
-		new->str[len] = str[len];
+	while (i < len)
+	{
+		new->str[i] = str[start];
+		i++;
+		start++;
+	}
 	new->right = NULL;
 	new->left = NULL;
 	return (0);

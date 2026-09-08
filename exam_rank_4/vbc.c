@@ -6,40 +6,59 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/03 14:12:11 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/07 14:35:56 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/08 18:37:48 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vbc.h"
 
-int	operation_split(t_list *lst, char *input, char operation)
-{
-	int	i;
 
-	i = 0;
-	while (input[i])
-	{
-		if (input[i] == operation)
-			;
-	}
+int		extend(t_list *current, int operator, int len, int i)
+{
+	current->left = new_node(current->str, 0, i);
+	if (!current->left)
+		return (1);
+	current->right = new_node(current->right, i, len - i);
+	if (!current->right)
+		return (1);
+	current->str = realloc(current->str, 1);
+	if (!current->str)
+		return (1);
+	current->str[0] = operator;
+	return (0);
 }
 
-int	vbc(t_list *lst, int sum)
+void	vbc(t_list *lst, t_list *current, char operator, int len)
 {
-	return 0;
+	int	i;
+	int	inquote;
+
+	i = 0;
+	inquote = 0;
+	while (current->str[i])
+	{
+		if (current->str[i] == '(')
+			inquote++;
+		else if (current->str[i] == ')')
+			inquote--;
+		else if (current->str[i] == operator && inquote == 0)
+			extend()
+		i++;
+	}
 }
 
 int	main(int argc, char **argv)
 {
 	t_list	*lst;
-	int		result;
+	int		len;
 
 	if (argc != 2)
 		return (1);
-	lst = list_init(argv[1]);
+	len = my_strlen(argv[1]);
+	lst = new_node(argv[1], 0, len);
 	if (!lst)
 		return (1);
-	result = vbc(lst, 0);
+	vbc(lst, lst, '*', len);
 	return (0);
 }
 
