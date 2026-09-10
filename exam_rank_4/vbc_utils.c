@@ -6,7 +6,7 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/07 13:56:55 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/10 12:50:35 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/10 17:09:59 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,21 @@ char	*quote_trim(char *str)
 	int		i;
 	char	*new;
 
-	len = (my_strlen(str) - 1);
-	if (str[0] != '(' || str[0] == '(' && str[len] != ')')
+	len = my_strlen(str);
+	if (str[0] != '(' || str[len - 1] != ')')
 		return (str);
 	i = 0;
+	len -= 2;
 	new = malloc((len + 1) * sizeof(char));
 	if (!new)
 		return (NULL);
 	new[len] = '\0';
-	while(i + 1 < len)
+	while(i < len)
 	{
 		new[i] = str[i + 1];
 		i++;
 	}
-	free(str);
-	str = quote_trim(new);
+	return (new);
 }
 
 t_list	*new_node(char *str, int start, int len)
@@ -60,9 +60,6 @@ t_list	*new_node(char *str, int start, int len)
 	new->str[len] = '\0';
 	while (i < len)
 		new->str[i++] = str[start++];
-	new->str = quote_trim(new->str);
-	if (!new->str)
-		return (NULL);
 	new->right = NULL;
 	new->left = NULL;
 	return (new);

@@ -6,74 +6,71 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/03 14:12:11 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/10 11:36:16 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/10 17:42:40 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vbc.h"
 
-int		extend_tree(t_list *current, int operator, int len, int i)
+int		extend_tree(t_list *lst, int operator, int i)
 {
-	current->left = new_node(current->str, 0, i);
-	if (!current->left)
+	int	len;
+
+	len = my_strlen(lst->str);
+	lst->left = new_node(lst->str, 0, i);
+	if (!lst->left)
 		return (1);
-	current->right = new_node(current->str, (i + 1), (len - i + 1));
-	if (!current->right)
+	lst->right = new_node(lst->str, (i + 1), (len - i + 1));
+	if (!lst->right)
 		return (1);
-	free(current->str);
-	current->str = malloc(2 * sizeof(char));
-	if (!current->str)
+	free(lst->str);
+	lst->str = malloc(2 * sizeof(char));
+	if (!lst->str)
 		return (1);
-	current->str[0] = operator;
-	current->str[1] = '\0';
+	lst->str[0] = operator;
+	lst->str[1] = '\0';
 	return (0);
 }
 
-void	vbc(t_list *lst, t_list *current, char operator, int len)
+void	vbc(t_list *lst, char operator)
 {
 	int	i;
-	int	inquote;
 
 	i = 0;
-	inquote = 0;
-	while (current->str[i])
+	while (lst->str[i])
 	{
-		if (current->str[i] == '(')
-			inquote++;
-		else if (current->str[i] == ')')
-			inquote--;
-		else if (current->str[i] == operator && inquote == 0)
+		if (lst->str[i] == '(')
+			while (lst->str[i] && lst->str[i] != ')')
+				i++;
+		if (!lst->str[i])
+			return ;//unexpected end of line
+		if (lst->str[0] == '(' && lst->str[i] == ')' && i == my_strlen(lst->str))
+			lst->str = quote_trim(lst->str);
+		if (lst->str[i] == operator)
 		{
-			if (extend_tree(current, operator, len, i) == 1)
+			if (extend_tree(lst, operator, i) == 1)
 				return ;//malloc or syntax error, free and return
-			vbc(lst, current->left, '+', i);
-			vbc(lst, current->right, '+', len - i);
+			vbc(lst->left, '+');
+			vbc(lst->right, '+');
 		}
 		i++;
 	}
-	if (!current->str[i] && operator == '*')
-		return ;
-	if (!current->str[i] && operator == '+')
-		vbc(lst, current, '*', len);
+	if (!lst->str[i] && operator == '+')
+		vbc(lst, '*');
 }
 
-int	count_tree(t_list *lst)
+int	calculate(t_list *lst)
 {
 	int	result;
 
 	result = 0;
-	if (lst->left)
-		result = count_tree(lst->left);
-	if (lst->right)
-	{
-		if (lst->str[0] == '*')
-		
-			result *= count_tree(lst->right);
-		else if (lst->str[0] == '+')
-			result += count_tree(lst->right);
-	}
 	if (!lst->left && !lst->right)
-		result = lst->str[0] - 48;
+		return (lst->str[0] - 48);
+	result = calculate(lst->left);
+	if (lst->str[0] == '+')
+		result += calculate(lst->right);
+	else if (lst->str[0] == '*')
+		result *= calculate(lst->right);
 	return (result);
 }
 
@@ -89,8 +86,8 @@ int	main(int argc, char **argv)
 	lst = new_node(argv[1], 0, len);
 	if (!lst)
 		return (1);
-	vbc(lst, lst, '+', len);
-	result = count_tree(lst);
+	vbc(lst, '+');
+	result = calculate(lst);
 	printf("result is : %d\n", result);
 	return (0);
 }
