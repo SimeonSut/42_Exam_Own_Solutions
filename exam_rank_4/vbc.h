@@ -6,7 +6,7 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/07 13:56:57 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/08 14:03:28 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/09 22:09:38 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 typedef struct	s_list
 {
-	char	*str;
+	char			*str;
 	struct s_list	*right;
 	struct s_list	*left;
 }				t_list;

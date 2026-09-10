@@ -1,4 +1,4 @@
-+/* ************************************************************************** */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   vbc_utils.c                                        :+:      :+:    :+:   */
@@ -6,7 +6,7 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/07 13:56:55 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/07 14:09:17 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/10 10:37:56 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ t_list	*new_node(char *str, int start, int len)
 		free(new);
 		return (NULL);
 	}
-	new->str[len] = NULL;
+	new->str[len] = '\0';
 	while (i < len)
 	{
 		new->str[i] = str[start];
@@ -66,6 +66,5 @@ t_list	*new_node(char *str, int start, int len)
 	}
 	new->right = NULL;
 	new->left = NULL;
-	return (0);
+	return (new);
 }
-
