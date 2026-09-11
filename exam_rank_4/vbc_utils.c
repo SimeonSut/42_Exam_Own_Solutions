@@ -6,7 +6,7 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/07 13:56:55 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/10 17:09:59 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/11 17:10:06 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,45 @@ int		my_strlen(char *str)
 	return (i);
 }
 
-char	*quote_trim(char *str)
+int		quote_trim_check(t_list *lst)
 {
-	int		len;
+	int	i;
+	int	len;
+	int	count;
+
+	if (lst->str[0] != '(')
+		return (0);
+	i = 0;
+	len = my_strlen(lst->str) - 1;
+	count = 0;
+	while (lst->str[i])
+	{
+		if (count == 0 && (i > 0 && i < len))
+			return (0);
+		if (lst->str[i] == '(')
+			count++;
+		if (lst->str[i] == ')')
+			count--;
+		i++;
+	}
+	lst->str = quote_trim(lst->str, 1);
+	if (!lst->str)
+			return (1);
+	if (quote_trim_check(lst) == 1)
+		return (1);
+	return (0);
+}
+
+char	*quote_trim(char *str, int free_cmd)
+{
 	int		i;
+	int		len;
 	char	*new;
 
-	len = my_strlen(str);
-	if (str[0] != '(' || str[len - 1] != ')')
-		return (str);
 	i = 0;
-	len -= 2;
+	len = my_strlen(str) - 2;
+	if (str[0] != '(' || str[len + 1] != ')')
+		return (str);
 	new = malloc((len + 1) * sizeof(char));
 	if (!new)
 		return (NULL);
@@ -42,6 +70,8 @@ char	*quote_trim(char *str)
 		new[i] = str[i + 1];
 		i++;
 	}
+	if (free_cmd == 1)
+		free(str);
 	return (new);
 }
 

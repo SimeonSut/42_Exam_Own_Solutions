@@ -6,7 +6,7 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/03 14:12:11 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/10 17:42:40 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/11 16:57:06 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,31 +32,33 @@ int		extend_tree(t_list *lst, int operator, int i)
 	return (0);
 }
 
-void	vbc(t_list *lst, char operator)
+int		vbc(t_list *lst, char operator)
 {
 	int	i;
+	int	quotes;
 
 	i = 0;
+	quotes = 0;
+	if (quote_trim_check(lst) == 1)
+		return (1);
 	while (lst->str[i])
 	{
 		if (lst->str[i] == '(')
-			while (lst->str[i] && lst->str[i] != ')')
-				i++;
-		if (!lst->str[i])
-			return ;//unexpected end of line
-		if (lst->str[0] == '(' && lst->str[i] == ')' && i == my_strlen(lst->str))
-			lst->str = quote_trim(lst->str);
-		if (lst->str[i] == operator)
+			quotes++;
+		else if (lst->str[i] == ')')
+			quotes--;
+		if (quotes == 0 && lst->str[i] == operator)
 		{
 			if (extend_tree(lst, operator, i) == 1)
-				return ;//malloc or syntax error, free and return
-			vbc(lst->left, '+');
-			vbc(lst->right, '+');
+				return (1);//malloc or syntax error, free and return
+			if (vbc(lst->left, '+') == 1 || vbc(lst->right, '+') == 1)
+				return (1);
 		}
 		i++;
 	}
 	if (!lst->str[i] && operator == '+')
-		vbc(lst, '*');
+		return (vbc(lst, '*'));
+	return (0);
 }
 
 int	calculate(t_list *lst)
@@ -86,7 +88,8 @@ int	main(int argc, char **argv)
 	lst = new_node(argv[1], 0, len);
 	if (!lst)
 		return (1);
-	vbc(lst, '+');
+	if (vbc(lst, '+') == 1)
+		return (1);
 	result = calculate(lst);
 	printf("result is : %d\n", result);
 	return (0);

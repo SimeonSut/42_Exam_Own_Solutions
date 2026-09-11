@@ -6,7 +6,7 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/07 13:56:57 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/10 17:09:51 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/11 16:46:23 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,6 @@ typedef struct	s_list
 }				t_list;
 
 int		my_strlen(char *str);
-char	*quote_trim(char *str);
+int		quote_trim_check(t_list *lst);
+char	*quote_trim(char *str, int free_cmd);
 t_list	*new_node(char *str, int start, int len);
-
-enum e_modes
-{
-	INIT = 0,
-	NUMBER = 1,
-	OPERATION = 2
-};
-
