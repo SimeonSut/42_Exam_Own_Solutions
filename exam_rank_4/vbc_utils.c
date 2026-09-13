@@ -6,7 +6,7 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/07 13:56:55 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/11 17:10:06 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/13 13:06:56 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ t_list	*new_node(char *str, int start, int len)
 	new = malloc(sizeof(t_list));
 	if (!new)
 		return (NULL);
-	new->str = malloc(len + 1 * sizeof(char));
+	new->str = malloc((len + 1) * sizeof(char));
 	if (!new->str)
 		return (free(new), NULL);
 	new->str[len] = '\0';

@@ -6,11 +6,39 @@
 /*   By: ssutarmi <ssutarmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/03 14:12:11 by ssutarmi          #+#    #+#             */
-/*   Updated: 2026/09/11 16:57:06 by ssutarmi         ###   ########.fr       */
+/*   Updated: 2026/09/13 13:44:35 by ssutarmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vbc.h"
+
+int		check_validity(char *str)
+{
+	int	i;
+	int	balance;
+
+	i = 0;
+	balance = 0;
+	while (str[i])
+	{
+		if (str[i] == '(')
+			balance++;
+		else if (str[i] == ')')
+			balance--;
+		else if (isdigit(str[i]) == 0)
+			break ;
+		if (balance < 0)
+			break ;
+		i++;
+	}
+	if (!str[i] && balance > 0)
+		return (printf("Unexpected end of input"), 1);
+	if (str[i] && !str[i + 1] && isdigit(str[i]) == 0)
+		return (printf("Unexpected end of input"), 1);
+	else if (str[i] && str[i + 1] && isdigit(str[i]) == 0)
+		return (printf("Unexpected token %c", str[i]), 1);
+	return (0);
+}
 
 int		extend_tree(t_list *lst, int operator, int i)
 {
@@ -83,6 +111,8 @@ int	main(int argc, char **argv)
 	int		len;
 
 	if (argc != 2)
+		return (1);
+	if (check_validity(argv[1]) == 1)
 		return (1);
 	len = my_strlen(argv[1]);
 	lst = new_node(argv[1], 0, len);
